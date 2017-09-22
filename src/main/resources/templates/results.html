@@ -5,6 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<p>Done!</p>
+
+<p th:text="'The most common word in the file was ' + ${most.getWord()} + '!'" />
+<p th:text="'The least common word in the file was  ' + ${least.getWord()} + '!'" />
+
 </body>
 </html>

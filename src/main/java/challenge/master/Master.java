@@ -17,21 +17,21 @@ public class Master implements Runnable {
     Queue queue;
     MessageProducer producer;
     String fileName;
-    RegisteredNodeRepository registeredNodeRepository;
     WordCountRepositoryCustom wordCountRepositoryCustom;
     ResultsRepository resultsRepository;
 
-    public Master(String url, RegisteredNodeRepository registeredNodeRepository, WordCountRepositoryCustom wordCountRepositoryCustom, ResultsRepository reesultsRepository) {
+    public Master(String url, WordCountRepositoryCustom wordCountRepositoryCustom, ResultsRepository resultsRepository, boolean embedded) {
 
-        this.registeredNodeRepository = registeredNodeRepository;
-        this.resultsRepository = reesultsRepository;
+        this.resultsRepository = resultsRepository;
         this.wordCountRepositoryCustom = wordCountRepositoryCustom;
 
         try {
 
-            Thread broker = new Thread(new BrokerRunner(url));
-            broker.setDaemon(true);
-            broker.start();
+            if(embedded) {
+                Thread broker = new Thread(new BrokerRunner(url));
+                broker.setDaemon(true);
+                broker.start();
+            }
 
             ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
             connection = connectionFactory.createConnection();
@@ -57,7 +57,7 @@ public class Master implements Runnable {
             boolean done = false;
             while (!done) {
                 List<String> chunk = new ArrayList<>();
-                int chunckSize = 1000000;
+                int chunckSize = 250000;
                 for(int i=0; i < chunckSize; i++) {
                     String line = reader.readLine();
                     if(line != null) {
@@ -101,6 +101,5 @@ public class Master implements Runnable {
             e.printStackTrace();
         }
         reduceWordCountToResults();
-        registeredNodeRepository.deleteAll();
     }
 }

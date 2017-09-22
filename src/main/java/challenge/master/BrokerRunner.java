@@ -12,8 +12,6 @@ public class BrokerRunner implements Runnable{
     public BrokerRunner(String url) {
         try {
             broker = BrokerFactory.createBroker(new URI("broker:(" + url + ")"));
-            broker.setUseJmx(true);
-            broker.getManagementContext().setConnectorPort(9999);
         } catch (Exception e) {
             e.printStackTrace();
         }
